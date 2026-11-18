@@ -1,0 +1,48 @@
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="utf-8"/>
+	<title>Update Curve Point</title>
+	<link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+</head>
+<body>
+<div class="container">
+	<h2>Update Curve Point</h2>
+
+	<form th:action="@{/curvePoint/update/{id}(id=${curvePoint.id})}"
+		  th:object="${curvePoint}"
+		  method="post"
+		  class="form-horizontal">
+
+		<input type="hidden" th:field="*{id}">
+
+		<div class="form-group">
+			<label for="term">Term</label>
+			<input type="text" th:field="*{term}"
+				   id="term" placeholder="Term" class="col-4">
+
+			<p class="text-danger"
+			   th:if="${#fields.hasErrors('term')}"
+			   th:errors="*{term}"></p>
+		</div>
+
+		<div class="form-group">
+			<label for="value">Value</label>
+			<input type="number" step="any" th:field="*{value}"
+				   id="value" placeholder="Value" class="col-4">
+
+			<p class="text-danger"
+			   th:if="${#fields.hasErrors('value')}"
+			   th:errors="*{value}"></p>
+		</div>
+
+		<a class="btn btn-danger btn-sm"
+		   th:href="@{/curvePoint/list}">Cancel</a>
+
+		<input class="btn btn-primary btn-sm"
+			   type="submit" value="Update Curve Point">
+	</form>
+</div>
+</body>
+</html>
