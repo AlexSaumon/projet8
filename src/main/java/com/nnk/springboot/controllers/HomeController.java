@@ -1,23 +1,26 @@
+
 package com.nnk.springboot.controllers;
 
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.RequestMapping;
-import jakarta.validation.Valid;
+import org.springframework.web.bind.annotation.GetMapping;
+
 @Controller
-public class HomeController
-{
-	@RequestMapping("/")
-	public String home(Model model)
-	{
-		return "home";
+public class HomeController {
+
+	@GetMapping("/")
+	public String home(Authentication authentication) {
+
+		if (authentication != null && authentication.isAuthenticated()) {
+			return "redirect:/bidList/list";
+		}
+
+		return "redirect:/login";
 	}
 
-	@RequestMapping("/admin/home")
-	public String adminHome(Model model)
-	{
+	@GetMapping("/admin/home")
+	public String adminHome() {
 		return "redirect:/bidList/list";
 	}
-
-
 }
+

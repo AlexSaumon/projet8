@@ -13,7 +13,13 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.web.filter.OncePerRequestFilter;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import java.io.IOException;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
@@ -52,15 +58,33 @@ public class SecurityConfig {
         http.authorizeHttpRequests(auth -> auth
                         .requestMatchers(
                                 "/",
-                                "/login",
                                 "/css/**",
                                 "/js/**",
                                 "/images/**",
                                 "/webjars/**"
                         ).permitAll()
                         .anyRequest().authenticated()
-                )
+                );
+        http.addFilterBefore(
+                new OncePerRequestFilter() {
+                    @Override
+                    protected void doFilterInternal(
+                            HttpServletRequest request,
+                            HttpServletResponse response,
+                            FilterChain filterChain
+                    ) throws ServletException, IOException {
 
+                        if ("/login".equals(request.getServletPath())
+                                && request.getUserPrincipal() != null) {
+                            response.sendRedirect("/bidList/list");
+                            return;
+                        }
+
+                        filterChain.doFilter(request, response);
+                    }
+                },
+                UsernamePasswordAuthenticationFilter.class
+        )
                 .formLogin(form -> form
                         // Utilise la page de connexion générée par Spring Security
                         .defaultSuccessUrl("/bidList/list", true)
@@ -76,5 +100,6 @@ public class SecurityConfig {
 
         return http.build();
     }
+
 
 }
